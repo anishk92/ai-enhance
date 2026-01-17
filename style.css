@@ -1,106 +1,76 @@
 body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: linear-gradient(135deg,#020617,#0f172a);
+  font-family: system-ui;
+  background: #020617;
   color: #e5e7eb;
+  margin: 0;
   text-align: center;
 }
 
-.compress-box {
-  margin: 20px 0;
-  text-align: left;
+header {
+  padding: 30px 20px;
 }
 
-.compress-box label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-  color: #cbd5f5;
-}
-
-.compress-box input,
-.compress-box select {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-}
-
-
-.top { padding: 40px 20px; }
-
-.card {
-  max-width: 540px;
-  margin: auto;
-  background: #020617;
-  padding: 25px;
-  border-radius: 16px;
-}
-
-.upload-box {
-  border: 2px dashed #334155;
-  padding: 30px;
-  border-radius: 12px;
-  cursor: pointer;
-}
-.upload-box input { display: none; }
-
-.preset-group {
+.tabs {
   display: flex;
+  justify-content: center;
   gap: 10px;
-  margin: 20px 0;
-}
-.preset-group button {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  background: #1e293b;
-  color: white;
-}
-
-select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
   margin-bottom: 20px;
 }
 
-.slider-wrapper {
-  position: relative;
+.tab {
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background: #1e293b;
+  color: #fff;
+  cursor: pointer;
 }
-.img-container {
-  position: relative;
+
+.tab.active {
+  background: #22c55e;
+  color: #020617;
 }
+
+.tool {
+  display: none;
+  max-width: 520px;
+  margin: auto;
+  padding: 20px;
+}
+
+.tool.active {
+  display: block;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+}
+
 canvas {
   max-width: 100%;
-  border-radius: 12px;
-}
-#after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  clip-path: inset(0 50% 0 0);
-}
-
-#slider {
-  width: 100%;
   margin: 15px 0;
+  border-radius: 10px;
 }
 
-.controls button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 10px;
-  background: #22c55e;
-  border: none;
+button {
+  background: #38bdf8;
   font-weight: bold;
   cursor: pointer;
 }
 
+.coming {
+  background: #020617;
+  padding: 30px;
+  border-radius: 12px;
+  color: #94a3b8;
+}
+
 footer {
   padding: 20px;
+  font-size: 13px;
   color: #64748b;
 }
