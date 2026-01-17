@@ -1,123 +1,85 @@
-const upload = document.getElementById('upload');
-const before = document.getElementById('before');
-const after = document.getElementById('after');
-const slider = document.getElementById('slider');
-const resize = document.getElementById('resize');
-const downloadBtn = document.getElementById('download');
-const qualitySlider = document.getElementById('quality');
-const qval = document.getElementById('qval');
-const formatSelect = document.getElementById('format');
-
-const btx = before.getContext('2d');
-const atx = after.getContext('2d');
-
-let img = new Image();
-let width = 0;
-let height = 0;
-let activePreset = 'portrait';
-
-upload.addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    img.onload = drawOriginal;
-    img.src = reader.result;
+/* ===== TAB SYSTEM ===== */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tool').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
   };
-  reader.readAsDataURL(file);
 });
 
-function drawOriginal() {
-  width = img.width;
-  height = img.height;
+/* ===== ENHANCER ===== */
+const eUpload = document.getElementById('enhanceUpload');
+const eCanvas = document.getElementById('enhanceCanvas');
+const eCtx = eCanvas.getContext('2d');
+const ePreset = document.getElementById('enhancePreset');
 
-  before.width = after.width = width;
-  before.height = after.height = height;
+let eImg = new Image();
 
-  btx.clearRect(0, 0, width, height);
-  atx.clearRect(0, 0, width, height);
-
-  btx.drawImage(img, 0, 0, width, height);
-  applyPreset();
-  updateSlider();
-}
-
-document.getElementById('btn-enhance').onclick = () => {
-  activePreset = 'portrait';
-  applyPreset();
-};
-
-document.getElementById('btn-old-photo').onclick = () => {
-  activePreset = 'old';
-  applyPreset();
-};
-
-function applyPreset() {
-  if (!img.src) return;
-
-  atx.clearRect(0, 0, width, height);
-  atx.filter = getFilter(activePreset);
-  atx.drawImage(img, 0, 0, width, height);
-  atx.filter = 'none';
-}
-
-function getFilter(preset) {
-  switch (preset) {
-    case 'portrait':
-      return 'brightness(108%) contrast(112%) saturate(115%)';
-    case 'old':
-      return 'grayscale(100%) sepia(45%) contrast(95%)';
-    default:
-      return 'none';
-  }
-}
-
-slider.oninput = updateSlider;
-function updateSlider() {
-  after.style.clipPath = `inset(0 ${100 - slider.value}% 0 0)`;
-}
-
-resize.onchange = () => {
-  if (!img.src) return;
-
-  const map = {
-    ig: [1080, 1080],
-    yt: [1280, 720],
-    fb: [1200, 630]
+eUpload.onchange = e => {
+  const r = new FileReader();
+  r.onload = () => {
+    eImg.onload = drawEnhance;
+    eImg.src = r.result;
   };
-
-  if (!map[resize.value]) return;
-
-  [width, height] = map[resize.value];
-
-  before.width = after.width = width;
-  before.height = after.height = height;
-
-  btx.clearRect(0, 0, width, height);
-  atx.clearRect(0, 0, width, height);
-
-  btx.drawImage(img, 0, 0, width, height);
-  applyPreset();
+  r.readAsDataURL(e.target.files[0]);
 };
 
-qualitySlider.oninput = () => {
-  qval.textContent = qualitySlider.value;
+function drawEnhance() {
+  eCanvas.width = eImg.width;
+  eCanvas.height = eImg.height;
+  applyEnhance();
+}
+
+ePreset.onchange = applyEnhance;
+
+function applyEnhance() {
+  if (!eImg.src) return;
+  eCtx.clearRect(0,0,eCanvas.width,eCanvas.height);
+  eCtx.filter = {
+    portrait: 'brightness(108%) contrast(112%) saturate(115%)',
+    lowlight: 'brightness(135%) contrast(110%)',
+    old: 'grayscale(100%) sepia(40%)'
+  }[ePreset.value];
+  eCtx.drawImage(eImg,0,0);
+  eCtx.filter = 'none';
+}
+
+document.getElementById('enhanceDownload').onclick = () => {
+  const a = document.createElement('a');
+  a.href = eCanvas.toDataURL('image/png');
+  a.download = 'enhanced.png';
+  a.click();
 };
 
-downloadBtn.onclick = () => {
-  if (!img.src) return;
+/* ===== COMPRESSOR ===== */
+const cUpload = document.getElementById('compressUpload');
+const cCanvas = document.getElementById('compressCanvas');
+const cCtx = cCanvas.getContext('2d');
+const quality = document.getElementById('quality');
+const qval = document.getElementById('qval');
+const format = document.getElementById('format');
 
-  const quality = qualitySlider.value / 100;
-  const format = formatSelect.value;
+let cImg = new Image();
 
-  // BLOCK unsupported formats
-  if (format === 'image/avif') {
-    alert('AVIF export not supported in browser. Use WebP.');
-    return;
-  }
+quality.oninput = () => qval.textContent = quality.value;
 
-  const link = document.createElement('a');
-  link.href = after.toDataURL(format, quality);
-  link.download = `processed-image.${format.split('/')[1]}`;
-  link.click();
+cUpload.onchange = e => {
+  const r = new FileReader();
+  r.onload = () => {
+    cImg.onload = () => {
+      cCanvas.width = cImg.width;
+      cCanvas.height = cImg.height;
+      cCtx.drawImage(cImg,0,0);
+    };
+    cImg.src = r.result;
+  };
+  r.readAsDataURL(e.target.files[0]);
+};
+
+document.getElementById('compressDownload').onclick = () => {
+  const a = document.createElement('a');
+  a.href = cCanvas.toDataURL(format.value, quality.value / 100);
+  a.download = 'compressed.' + format.value.split('/')[1];
+  a.click();
 };
