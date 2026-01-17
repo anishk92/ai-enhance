@@ -4,6 +4,10 @@ const after = document.getElementById('after');
 const slider = document.getElementById('slider');
 const resize = document.getElementById('resize');
 const downloadBtn = document.getElementById('download');
+const qualitySlider = document.getElementById('quality');
+const qval = document.getElementById('qval');
+const formatSelect = document.getElementById('format');
+
 
 const btx = before.getContext('2d');
 const atx = after.getContext('2d');
@@ -23,6 +27,10 @@ upload.addEventListener('change', (e) => {
     img.src = reader.result;
   };
   reader.readAsDataURL(file);
+});
+
+qualitySlider.addEventListener('input', () => {
+  qval.textContent = qualitySlider.value;
 });
 
 function drawOriginal() {
@@ -103,6 +111,23 @@ function resizeCanvas(w, h) {
   btx.drawImage(img, 0, 0, w, h);
   atx.drawImage(img, 0, 0, w, h);
 }
+
+downloadBtn.addEventListener('click', () => {
+  if (!img.src) return;
+
+  const quality = parseInt(qualitySlider.value) / 100;
+  const format = formatSelect.value;
+
+  const link = document.createElement('a');
+  link.href = after.toDataURL(format, quality);
+  link.download =
+    format === 'image/webp'
+      ? 'compressed-image.webp'
+      : 'compressed-image.jpg';
+
+  link.click();
+});
+
 
 downloadBtn.addEventListener('click', () => {
   if (!img.src) return;
