@@ -1,24 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AI Image Enhancer – Free Online Photo Quality Improver</title>
-  <meta name="description" content="Enhance image quality online for free. Improve photo clarity, sharpness, and brightness instantly. No signup required.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>AI Image Enhancer – Improve Photo Quality Instantly</title>
+  <meta name="description" content="Free AI Image Enhancer. Improve photo quality, clarity, sharpness & brightness online. No signup. Images stay on your device.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <header class="top">
+    <h1>AI Image Enhancer</h1>
+    <p>Enhance image quality instantly. Free • No signup • Private</p>
+  </header>
 
-<h1>AI Image Enhancer</h1>
-<p>Upload an image and instantly improve its quality. Free & no signup.</p>
+  <main class="card">
+    <label class="upload-box">
+      <input type="file" id="upload" accept="image/*" />
+      <span>📤 Click to upload image</span>
+    </label>
 
-<input type="file" id="upload" accept="image/*">
-<button onclick="enhance()">Enhance Image</button>
+    <div class="controls">
+      <button id="enhanceBtn">Enhance Image</button>
+      <a id="downloadBtn" class="disabled" download="enhanced-image.png">Download</a>
+    </div>
 
-<canvas id="canvas"></canvas>
-<br>
-<a id="download" download="enhanced-image.png">Download Image</a>
+    <div class="preview">
+      <canvas id="canvas"></canvas>
+    </div>
+  </main>
 
-<script src="script.js"></script>
+  <section class="features">
+    <div>⚡ Instant enhancement</div>
+    <div>🔒 100% browser-based</div>
+    <div>📱 Mobile friendly</div>
+    <div>🆓 Free forever</div>
+  </section>
+
+  <footer>
+    <p>Images are processed locally in your browser. Nothing is uploaded.</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
