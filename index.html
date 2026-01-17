@@ -2,71 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AI Image Enhancer – Enhance & Resize Photos Online</title>
-  <meta name="description" content="Enhance images online with presets, before-after slider, and social media resize. Free & private.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Image Tools – Enhance, Compress & More</title>
+  <meta name="description" content="Free AI Image tools: Enhance photos, compress images, and remove objects.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header class="top">
-  <h1>AI Image Enhancer</h1>
-  <p>Enhance • Compare • Resize • Download</p>
+<header>
+  <h1>AI Image Tools</h1>
+  <p>Enhance • Compress • Remove Objects</p>
 </header>
 
-<main class="card">
+<!-- TABS -->
+<nav class="tabs">
+  <button class="tab active" data-tab="enhance">Enhance</button>
+  <button class="tab" data-tab="compress">Compress</button>
+  <button class="tab" data-tab="remove">Logo Remover</button>
+</nav>
 
-  <!-- Upload -->
-  <label class="upload-box">
-    <input type="file" id="upload" accept="image/*">
-    <span>📤 Upload Image</span>
-  </label>
-
-  <!-- Presets -->
-  <div class="preset-group">
-    <button data-preset="portrait">Portrait</button>
-    <button data-preset="old">Old Photo</button>
-    <button data-preset="lowlight">Low Light</button>
-  </div>
-
-  <!-- Resize -->
-  <select id="resize">
-    <option value="">Resize for Social Media</option>
-    <option value="ig">Instagram (1080×1080)</option>
-    <option value="yt">YouTube Thumbnail (1280×720)</option>
+<!-- ================= ENHANCER ================= -->
+<section id="enhance" class="tool active">
+  <h2>Image Enhancer</h2>
+  <input type="file" id="enhanceUpload" accept="image/*">
+  <select id="enhancePreset">
+    <option value="portrait">Portrait</option>
+    <option value="lowlight">Low Light</option>
+    <option value="old">Old Photo</option>
   </select>
+  <canvas id="enhanceCanvas"></canvas>
+  <button id="enhanceDownload">Download Enhanced</button>
+</section>
 
-  <!-- Slider -->
-  <div class="slider-wrapper">
-    <div class="img-container">
-      <canvas id="before"></canvas>
-      <canvas id="after"></canvas>
-    </div>
-    <input type="range" id="slider" min="0" max="100" value="50">
-  </div>
-
-  <!-- Actions -->
-  <div class="controls">
-    <button id="download">Download</button>
-  </div>
-
-  <!-- Compression -->
-<div class="compress-box">
-  <label>Compression Quality: <span id="qval">80</span>%</label>
+<!-- ================= COMPRESSOR ================= -->
+<section id="compress" class="tool">
+  <h2>Image Compressor</h2>
+  <input type="file" id="compressUpload" accept="image/*">
+  <label>Quality: <span id="qval">80</span>%</label>
   <input type="range" id="quality" min="30" max="95" value="80">
-
   <select id="format">
-    <option value="image/jpeg">JPEG (Smaller)</option>
-    <option value="image/webp">WebP (Best)</option>
+    <option value="image/jpeg">JPEG</option>
+    <option value="image/webp">WebP</option>
   </select>
-</div>
+  <canvas id="compressCanvas"></canvas>
+  <button id="compressDownload">Download Compressed</button>
+</section>
 
-
-</main>
+<!-- ================= LOGO REMOVER ================= -->
+<section id="remove" class="tool">
+  <h2>Logo / Object Remover</h2>
+  <div class="coming">
+    🚧 AI-powered logo removal is coming soon.<br>
+    This feature requires advanced AI processing.
+  </div>
+</section>
 
 <footer>
-  Images are processed locally in your browser.
+  All image processing happens locally in your browser.
 </footer>
 
 <script src="script.js"></script>
