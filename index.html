@@ -1,46 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>AI Image Enhancer – Improve Photo Quality Instantly</title>
-  <meta name="description" content="Free AI Image Enhancer. Improve photo quality, clarity, sharpness & brightness online. No signup. Images stay on your device.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>AI Image Enhancer – Enhance & Resize Photos Online</title>
+  <meta name="description" content="Enhance images online with presets, before-after slider, and social media resize. Free & private.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <header class="top">
-    <h1>AI Image Enhancer</h1>
-    <p>Enhance image quality instantly. Free • No signup • Private</p>
-  </header>
 
-  <main class="card">
-    <label class="upload-box">
-      <input type="file" id="upload" accept="image/*" />
-      <span>📤 Click to upload image</span>
-    </label>
+<header class="top">
+  <h1>AI Image Enhancer</h1>
+  <p>Enhance • Compare • Resize • Download</p>
+</header>
 
-    <div class="controls">
-      <button id="enhanceBtn">Enhance Image</button>
-      <a id="downloadBtn" class="disabled" download="enhanced-image.png">Download</a>
+<main class="card">
+
+  <!-- Upload -->
+  <label class="upload-box">
+    <input type="file" id="upload" accept="image/*">
+    <span>📤 Upload Image</span>
+  </label>
+
+  <!-- Presets -->
+  <div class="preset-group">
+    <button data-preset="portrait">Portrait</button>
+    <button data-preset="old">Old Photo</button>
+    <button data-preset="lowlight">Low Light</button>
+  </div>
+
+  <!-- Resize -->
+  <select id="resize">
+    <option value="">Resize for Social Media</option>
+    <option value="ig">Instagram (1080×1080)</option>
+    <option value="yt">YouTube Thumbnail (1280×720)</option>
+  </select>
+
+  <!-- Slider -->
+  <div class="slider-wrapper">
+    <div class="img-container">
+      <canvas id="before"></canvas>
+      <canvas id="after"></canvas>
     </div>
+    <input type="range" id="slider" min="0" max="100" value="50">
+  </div>
 
-    <div class="preview">
-      <canvas id="canvas"></canvas>
-    </div>
-  </main>
+  <!-- Actions -->
+  <div class="controls">
+    <button id="download">Download</button>
+  </div>
 
-  <section class="features">
-    <div>⚡ Instant enhancement</div>
-    <div>🔒 100% browser-based</div>
-    <div>📱 Mobile friendly</div>
-    <div>🆓 Free forever</div>
-  </section>
+</main>
 
-  <footer>
-    <p>Images are processed locally in your browser. Nothing is uploaded.</p>
-  </footer>
+<footer>
+  Images are processed locally in your browser.
+</footer>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
