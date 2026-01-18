@@ -72,43 +72,94 @@ document.getElementById('compressDownload').onclick = () => {
 };
 
 /* ================= WATERMARK REMOVER ================= */
+/* ================= WATERMARK REMOVER ================= */
+const MAX_FREE = 5; // Matches your HTML 5/5
+const today = new Date().toDateString();
+let usage = JSON.parse(localStorage.getItem('wm_usage') || '{}');
+
+// Fix usage initialization
+if (usage.date !== today) {
+    usage = { date: today, count: 0 };
+    localStorage.setItem('wm_usage', JSON.stringify(usage));
+}
+
+// Update the UI counter immediately
+const remaining = document.getElementById('remaining');
+if (remaining) remaining.textContent = (MAX_FREE - usage.count);
+
+const rCanvas = document.getElementById('removeCanvas');
+const rCtx = rCanvas.getContext('2d', { willReadFrequently: true });
+let rImg = new Image();
+
+// 1. Handle File Upload
+document.getElementById('removeUpload').onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        rImg = new Image();
+        rImg.onload = () => {
+            rCanvas.width = rImg.width;
+            rCanvas.height = rImg.height;
+            rCtx.drawImage(rImg, 0, 0);
+        };
+        rImg.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+};
+
+// 2. The Process Function (REPAIRED LOGIC)
 document.getElementById('removeProcess').onclick = () => {
-  if (usage.count >= MAX_FREE) {
-    alert('Daily free limit reached. Upgrade for unlimited access.');
-    return;
-  }
-
-  // 1. Get image data from canvas
-  const imgData = rCtx.getImageData(0, 0, rCanvas.width, rCanvas.height);
-  const d = imgData.data;
-
-  /**
-   * ADJUST THESE SETTINGS:
-   * threshold: Only affects bright pixels (prevents ruining dark areas)
-   * strength: How much "white" to remove (0.1 to 0.2 is best for Gemini)
-   */
-  const threshold = 160; 
-  const strength = 0.15; 
-
-  for (let i = 0; i < d.length; i += 4) {
-    // Check if the pixel is bright enough to be part of the logo
-    if (d[i] > threshold && d[i+1] > threshold && d[i+2] > threshold) {
-      
-      // Reverse Alpha Blending Formula:
-      // OriginalColor = (CurrentColor - (White * Strength)) / (1 - Strength)
-      d[i]     = (d[i] - (255 * strength)) / (1 - strength);     // Red
-      d[i + 1] = (d[i + 1] - (255 * strength)) / (1 - strength); // Green
-      d[i + 2] = (d[i + 2] - (255 * strength)) / (1 - strength); // Blue
-      
-      // Note: We keep d[i+3] (Alpha) at 255 so the image stays solid
+    if (!rImg.src) {
+        alert('Please upload an image first');
+        return;
     }
-  }
+    
+    if (usage.count >= MAX_FREE) {
+        alert('Daily free limit reached. Upgrade for unlimited access.');
+        return;
+    }
 
-  // 2. Put the corrected pixels back
-  rCtx.putImageData(imgData, 0, 0);
+    const imgData = rCtx.getImageData(0, 0, rCanvas.width, rCanvas.height);
+    const d = imgData.data;
 
-  // 3. Update usage
-  usage.count++;
-  localStorage.setItem('wm_usage', JSON.stringify(usage));
-  remaining.textContent = MAX_FREE - usage.count;
+    /* Gemini uses a semi-transparent white overlay. 
+       We target pixels that are bright (threshold) and 
+       subtract the white haze (strength).
+    */
+    const threshold = 160; 
+    const strength = 0.18; // Intensity of the watermark removal
+
+    for (let i = 0; i < d.length; i += 4) {
+        // Only process pixels that are lighter than the threshold
+        if (d[i] > threshold && d[i+1] > threshold && d[i+2] > threshold) {
+            
+            // MATH: Recover original color from under the white haze
+            // Formula: (Result - (255 * Alpha)) / (1 - Alpha)
+            d[i]     = (d[i] - (255 * strength)) / (1 - strength);
+            d[i + 1] = (d[i + 1] - (255 * strength)) / (1 - strength);
+            d[i + 2] = (d[i + 2] - (255 * strength)) / (1 - strength);
+            
+            // Ensure values stay in 0-255 range
+            d[i] = Math.max(0, Math.min(255, d[i]));
+            d[i+1] = Math.max(0, Math.min(255, d[i+1]));
+            d[i+2] = Math.max(0, Math.min(255, d[i+2]));
+        }
+    }
+
+    rCtx.putImageData(imgData, 0, 0);
+
+    // Update Usage
+    usage.count++;
+    localStorage.setItem('wm_usage', JSON.stringify(usage));
+    if (remaining) remaining.textContent = (MAX_FREE - usage.count);
+};
+
+// 3. Download Logic
+document.getElementById('removeDownload').onclick = () => {
+    const link = document.createElement('a');
+    link.download = 'watermark-removed.png';
+    link.href = rCanvas.toDataURL();
+    link.click();
 };
