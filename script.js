@@ -72,7 +72,7 @@ document.getElementById('compressDownload').onclick = () => {
 };
 
 /* ================= WATERMARK REMOVER ================= */
-const MAX_FREE = 5;
+const MAX_FREE = 10;
 const today = new Date().toDateString();
 let usage = JSON.parse(localStorage.getItem('wm_usage') || '{}');
 
