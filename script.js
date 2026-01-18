@@ -1,104 +1,88 @@
-document.addEventListener("DOMContentLoaded", () => {
+const upload = document.getElementById("upload");
+const loading = document.getElementById("loading");
+const preview = document.getElementById("preview");
+const afterCanvas = document.getElementById("after");
+const afterCtx = afterCanvas.getContext("2d", { willReadFrequently: true });
 
-  const uploadBox = document.getElementById("uploadBox");
-  const fileInput = document.getElementById("fileInput");
+// Configuration for Gemini Watermark
+const ALPHA_STRENGTH = 0.18; // Transparency of the logo
 
-  const loading = document.getElementById("loading");
-  const preview = document.getElementById("preview");
-  const actions = document.getElementById("actions");
+/**
+ * Your Shared Logic: Calculates the mask of the logo
+ */
+function calculateAlphaMap(data, width, height) {
+    const alphaMap = new Float32Array(width * height);
+    for (let i = 0; i < alphaMap.length; i++) {
+        const idx = i * 4;
+        // Take max brightness of RGB to find the logo pixels
+        const maxChannel = Math.max(data[idx], data[idx + 1], data[idx + 2]);
+        alphaMap[i] = maxChannel / 255.0;
+    }
+    return alphaMap;
+}
 
-  const beforeCanvas = document.getElementById("before");
-  const afterCanvas = document.getElementById("after");
-
-  const beforeCtx = beforeCanvas.getContext("2d");
-  const afterCtx = afterCanvas.getContext("2d");
-
-  const downloadBtn = document.getElementById("download");
-  const resetBtn = document.getElementById("reset");
-
-  const img = new Image();
-
-  /* === Gemini watermark constants === */
-  const ALPHA = 0.18;
-  const WHITE = 255;
-
-  /* === Open file dialog === */
-  uploadBox.onclick = () => fileInput.click();
-
-  /* === Handle upload === */
-  fileInput.onchange = () => {
-    const file = fileInput.files[0];
+upload.onchange = e => {
+    const file = e.target.files[0];
     if (!file) return;
 
-    resetUI();
     loading.classList.remove("hidden");
-
     const reader = new FileReader();
-    reader.onload = e => {
-      img.onload = () => processImage();
-      img.src = e.target.result;
+    reader.onload = () => {
+        const img = new Image();
+        img.onload = () => processImage(img);
+        img.src = reader.result;
     };
     reader.readAsDataURL(file);
-  };
+};
 
-  /* === Process automatically === */
-  function processImage() {
-    const w = img.width;
-    const h = img.height;
+function processImage(img) {
+    const w = afterCanvas.width = img.width;
+    const h = afterCanvas.height = img.height;
 
-    if (!w || !h) {
-      alert("Image failed to load");
-      return;
-    }
-
-    beforeCanvas.width = afterCanvas.width = w;
-    beforeCanvas.height = afterCanvas.height = h;
-
-    beforeCtx.drawImage(img, 0, 0);
     afterCtx.drawImage(img, 0, 0);
 
-    const size = (w > 1024 && h > 1024) ? 96 : 48;
-    const margin = size === 96 ? 64 : 32;
+    // 1. Identify the Gemini Logo Area (Bottom Right)
+    const areaW = Math.floor(w * 0.35); // Scan 35% of width
+    const areaH = Math.floor(h * 0.20); // Scan 20% of height
+    const startX = w - areaW;
+    const startY = h - areaH;
 
-    const x = w - size - margin;
-    const y = h - size - margin;
+    const imageData = afterCtx.getImageData(startX, startY, areaW, areaH);
+    const pixels = imageData.data;
 
-    const imgData = afterCtx.getImageData(x, y, size, size);
-    const d = imgData.data;
+    // 2. Use your Alpha Map logic to identify the logo pixels
+    const alphaMap = calculateAlphaMap(pixels, areaW, areaH);
 
-    for (let i = 0; i < d.length; i += 4) {
-      for (let c = 0; c < 3; c++) {
-        const v = (d[i + c] - ALPHA * WHITE) / (1 - ALPHA);
-        d[i + c] = Math.max(0, Math.min(255, v));
-      }
+    // 3. Apply Restoration Math
+    // We only change pixels where the alphaMap shows "Logo" (brightness > threshold)
+    for (let i = 0; i < pixels.length; i += 4) {
+        const alphaIndex = i / 4;
+        const brightness = alphaMap[alphaIndex];
+
+        // If brightness is high, it's the logo
+        if (brightness > 0.5) { 
+            // Formula: Reverse the blending of white (255) at the logo's alpha
+            for (let c = 0; c < 3; c++) {
+                let color = pixels[i + c];
+                // Math: (Result - (255 * Alpha)) / (1 - Alpha)
+                let corrected = (color - (255 * ALPHA_STRENGTH)) / (1 - ALPHA_STRENGTH);
+                pixels[i + c] = Math.max(0, Math.min(255, corrected));
+            }
+        }
     }
 
-    afterCtx.putImageData(imgData, x, y);
+    // 4. Update the Canvas
+    afterCtx.putImageData(imageData, startX, startY);
 
     loading.classList.add("hidden");
     preview.classList.remove("hidden");
-    actions.classList.remove("hidden");
-  }
+    document.getElementById("controls").classList.remove("hidden");
+}
 
-  /* === Download === */
-  downloadBtn.onclick = () => {
-    const a = document.createElement("a");
-    a.href = afterCanvas.toDataURL("image/png");
-    a.download = "watermark_removed.png";
-    a.click();
-  };
-
-  /* === Reset === */
-  resetBtn.onclick = () => {
-    fileInput.value = "";
-    resetUI();
-  };
-
-  function resetUI() {
-    loading.classList.add("hidden");
-    preview.classList.add("hidden");
-    actions.classList.add("hidden");
-    beforeCtx.clearRect(0,0,beforeCanvas.width,beforeCanvas.height);
-    afterCtx.clearRect(0,0,afterCanvas.width,afterCanvas.height);
-  }
-});
+// Download functionality
+document.getElementById("download").onclick = () => {
+    const link = document.createElement("a");
+    link.download = "removed_logo.png";
+    link.href = afterCanvas.toDataURL();
+    link.click();
+};
