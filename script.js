@@ -72,94 +72,85 @@ document.getElementById('compressDownload').onclick = () => {
 };
 
 /* ================= WATERMARK REMOVER ================= */
-/* ================= WATERMARK REMOVER ================= */
-const MAX_FREE = 5; // Matches your HTML 5/5
+/* ================= WATERMARK REMOVER (STABLE VERSION) ================= */
+
+const MAX_FREE = 5;
 const today = new Date().toDateString();
 let usage = JSON.parse(localStorage.getItem('wm_usage') || '{}');
 
-// Fix usage initialization
 if (usage.date !== today) {
-    usage = { date: today, count: 0 };
-    localStorage.setItem('wm_usage', JSON.stringify(usage));
+  usage = { date: today, count: 0 };
+  localStorage.setItem('wm_usage', JSON.stringify(usage));
 }
 
-// Update the UI counter immediately
 const remaining = document.getElementById('remaining');
-if (remaining) remaining.textContent = (MAX_FREE - usage.count);
+remaining.textContent = MAX_FREE - usage.count;
 
 const rCanvas = document.getElementById('removeCanvas');
 const rCtx = rCanvas.getContext('2d', { willReadFrequently: true });
 let rImg = new Image();
 
-// 1. Handle File Upload
+/* Upload */
 document.getElementById('removeUpload').onchange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        rImg = new Image();
-        rImg.onload = () => {
-            rCanvas.width = rImg.width;
-            rCanvas.height = rImg.height;
-            rCtx.drawImage(rImg, 0, 0);
-        };
-        rImg.src = event.target.result;
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    rImg = new Image();
+    rImg.onload = () => {
+      rCanvas.width = rImg.width;
+      rCanvas.height = rImg.height;
+      rCtx.drawImage(rImg, 0, 0);
     };
-    reader.readAsDataURL(file);
+    rImg.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
 };
 
-// 2. The Process Function (REPAIRED LOGIC)
+/* Process */
 document.getElementById('removeProcess').onclick = () => {
-    if (!rImg.src) {
-        alert('Please upload an image first');
-        return;
+  if (!rImg.src) {
+    alert('Upload an image first');
+    return;
+  }
+
+  if (usage.count >= MAX_FREE) {
+    alert('Daily free limit reached');
+    return;
+  }
+
+  const img = rCtx.getImageData(0, 0, rCanvas.width, rCanvas.height);
+  const d = img.data;
+
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i];
+    const g = d[i + 1];
+    const b = d[i + 2];
+
+    // Detect watermark-like pixels (bright + low contrast)
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+
+    if (max > 180 && (max - min) < 18) {
+      // Reduce luminance instead of destroying pixels
+      d[i]     = r * 0.82;
+      d[i + 1] = g * 0.82;
+      d[i + 2] = b * 0.82;
     }
-    
-    if (usage.count >= MAX_FREE) {
-        alert('Daily free limit reached. Upgrade for unlimited access.');
-        return;
-    }
+  }
 
-    const imgData = rCtx.getImageData(0, 0, rCanvas.width, rCanvas.height);
-    const d = imgData.data;
+  rCtx.putImageData(img, 0, 0);
 
-    /* Gemini uses a semi-transparent white overlay. 
-       We target pixels that are bright (threshold) and 
-       subtract the white haze (strength).
-    */
-    const threshold = 160; 
-    const strength = 0.18; // Intensity of the watermark removal
-
-    for (let i = 0; i < d.length; i += 4) {
-        // Only process pixels that are lighter than the threshold
-        if (d[i] > threshold && d[i+1] > threshold && d[i+2] > threshold) {
-            
-            // MATH: Recover original color from under the white haze
-            // Formula: (Result - (255 * Alpha)) / (1 - Alpha)
-            d[i]     = (d[i] - (255 * strength)) / (1 - strength);
-            d[i + 1] = (d[i + 1] - (255 * strength)) / (1 - strength);
-            d[i + 2] = (d[i + 2] - (255 * strength)) / (1 - strength);
-            
-            // Ensure values stay in 0-255 range
-            d[i] = Math.max(0, Math.min(255, d[i]));
-            d[i+1] = Math.max(0, Math.min(255, d[i+1]));
-            d[i+2] = Math.max(0, Math.min(255, d[i+2]));
-        }
-    }
-
-    rCtx.putImageData(imgData, 0, 0);
-
-    // Update Usage
-    usage.count++;
-    localStorage.setItem('wm_usage', JSON.stringify(usage));
-    if (remaining) remaining.textContent = (MAX_FREE - usage.count);
+  usage.count++;
+  localStorage.setItem('wm_usage', JSON.stringify(usage));
+  remaining.textContent = MAX_FREE - usage.count;
 };
 
-// 3. Download Logic
+/* Download */
 document.getElementById('removeDownload').onclick = () => {
-    const link = document.createElement('a');
-    link.download = 'watermark-removed.png';
-    link.href = rCanvas.toDataURL();
-    link.click();
+  const a = document.createElement('a');
+  a.download = 'watermark-reduced.png';
+  a.href = rCanvas.toDataURL('image/png');
+  a.click();
 };
