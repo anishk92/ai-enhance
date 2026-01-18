@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gemini Watermark Remover</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h1>Gemini Watermark Remover</h1>
+<p class="subtitle">Upload → Auto process → Download</p>
+
+<input id="fileInput" type="file" accept="image/*" hidden>
+
+<div id="uploadBox" class="upload-box">
+  Click to upload image
+</div>
+
+<div id="loading" class="hidden">Processing image…</div>
+
+<div id="preview" class="preview hidden">
+  <div>
+    <p>Before</p>
+    <canvas id="before"></canvas>
+  </div>
+  <div>
+    <p>After</p>
+    <canvas id="after"></canvas>
+  </div>
+</div>
+
+<div id="actions" class="hidden">
+  <button id="download">Download</button>
+  <button id="reset">Process another image</button>
+</div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

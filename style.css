@@ -1,0 +1,60 @@
+body {
+  font-family: system-ui;
+  background: #020617;
+  color: #e5e7eb;
+  text-align: center;
+  padding: 40px 16px;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-bottom: 30px;
+}
+
+.upload-box {
+  max-width: 420px;
+  margin: auto;
+  padding: 40px;
+  border: 2px dashed rgba(255,255,255,.2);
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 900px;
+  margin: 30px auto;
+}
+
+canvas {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+button {
+  padding: 14px 28px;
+  border-radius: 999px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 10px;
+}
+
+#download {
+  background: #22c55e;
+  color: #052e16;
+}
+
+#reset {
+  background: rgba(255,255,255,.1);
+  color: #e5e7eb;
+}
+
+.hidden { display: none; }
+
+@media(max-width:700px){
+  .preview { grid-template-columns: 1fr; }
+}
