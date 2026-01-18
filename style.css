@@ -62,11 +62,32 @@ button {
   cursor: pointer;
 }
 
-.coming {
-  background: #020617;
-  padding: 30px;
-  border-radius: 12px;
+.limit, .note {
+  font-size: 14px;
   color: #94a3b8;
+}
+
+.pricing, .faq, .trust {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+  gap: 15px;
+}
+
+.plan {
+  background: #020617;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+}
+
+.plan.pro {
+  border-color: #22c55e;
 }
 
 footer {
