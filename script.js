@@ -72,62 +72,43 @@ document.getElementById('compressDownload').onclick = () => {
 };
 
 /* ================= WATERMARK REMOVER ================= */
-const MAX_FREE = 10;
-const today = new Date().toDateString();
-let usage = JSON.parse(localStorage.getItem('wm_usage') || '{}');
-
-if (usage.date !== today) {
-  usage = { date: today, count: 0 };
-  localStorage.setItem('wm_usage', JSON.stringify(usage));
-}
-
-const remaining = document.getElementById('remaining');
-remaining.textContent = MAX_FREE - usage.count;
-
-const rCanvas = document.getElementById('removeCanvas');
-const rCtx = rCanvas.getContext('2d');
-let rImg;
-
-document.getElementById('removeUpload').onchange = e => {
-  rImg = new Image();
-  rImg.src = URL.createObjectURL(e.target.files[0]);
-  rImg.onload = () => {
-    rCanvas.width = rImg.width;
-    rCanvas.height = rImg.height;
-    rCtx.drawImage(rImg, 0, 0);
-  };
-};
-
 document.getElementById('removeProcess').onclick = () => {
   if (usage.count >= MAX_FREE) {
     alert('Daily free limit reached. Upgrade for unlimited access.');
     return;
   }
 
-  const img = rCtx.getImageData(0, 0, rCanvas.width, rCanvas.height);
-  const d = img.data;
+  // 1. Get image data from canvas
+  const imgData = rCtx.getImageData(0, 0, rCanvas.width, rCanvas.height);
+  const d = imgData.data;
+
+  /**
+   * ADJUST THESE SETTINGS:
+   * threshold: Only affects bright pixels (prevents ruining dark areas)
+   * strength: How much "white" to remove (0.1 to 0.2 is best for Gemini)
+   */
+  const threshold = 160; 
+  const strength = 0.15; 
 
   for (let i = 0; i < d.length; i += 4) {
-    if (d[i] > 240 && d[i+1] > 240 && d[i+2] > 240) {
-      d[i+3] = 0;
+    // Check if the pixel is bright enough to be part of the logo
+    if (d[i] > threshold && d[i+1] > threshold && d[i+2] > threshold) {
+      
+      // Reverse Alpha Blending Formula:
+      // OriginalColor = (CurrentColor - (White * Strength)) / (1 - Strength)
+      d[i]     = (d[i] - (255 * strength)) / (1 - strength);     // Red
+      d[i + 1] = (d[i + 1] - (255 * strength)) / (1 - strength); // Green
+      d[i + 2] = (d[i + 2] - (255 * strength)) / (1 - strength); // Blue
+      
+      // Note: We keep d[i+3] (Alpha) at 255 so the image stays solid
     }
   }
 
-  rCtx.putImageData(img, 0, 0);
+  // 2. Put the corrected pixels back
+  rCtx.putImageData(imgData, 0, 0);
 
+  // 3. Update usage
   usage.count++;
   localStorage.setItem('wm_usage', JSON.stringify(usage));
   remaining.textContent = MAX_FREE - usage.count;
 };
-
-document.getElementById('removeDownload').onclick = () => {
-  downloadCanvas(rCanvas, 'watermark-removed.png');
-};
-
-/* ================= UTIL ================= */
-function downloadCanvas(canvas, name, type = 'image/png', quality = 1) {
-  const a = document.createElement('a');
-  a.href = canvas.toDataURL(type, quality);
-  a.download = name;
-  a.click();
-}
