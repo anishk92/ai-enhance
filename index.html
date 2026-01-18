@@ -1,127 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>AI Image Tools – Enhance, Compress & Watermark Remover</title>
-  <meta name="description" content="Free AI image tools. Enhance photos, compress images, and remove Gemini, Nano & AI watermarks locally in your browser.">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <meta charset="utf-8">
+  <title>Remove Gemini Watermark Free – AI Watermark Remover</title>
 
-<header>
-  <h1>AI Image Tools</h1>
-  <p>Enhance • Compress • Remove AI Watermarks</p>
+  <meta name="description" content="Remove Google Gemini visible watermarks instantly. Free AI watermark remover. No signup. 100% private.">
+  <meta name="keywords" content="remove gemini watermark, ai watermark remover, gemini watermark remover">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="Remove Gemini Watermark Free">
+  <meta property="og:description" content="Instantly remove Google Gemini visible watermarks. Free & private.">
+  <meta property="og:type" content="website">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Gemini Watermark Remover",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "All",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
+</head>
+
+<body class="bg-zinc-950 text-white antialiased">
+
+<!-- HEADER -->
+<header class="fixed top-0 inset-x-0 h-16 backdrop-blur bg-black/70 border-b border-white/10 z-50">
+  <div class="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
+    <div class="font-bold text-xl text-accent">Gemini<span class="text-emerald-400">Remover</span></div>
+    <nav class="hidden md:flex gap-6 text-sm text-white/70">
+      <a href="#how" class="hover:text-white">How it works</a>
+      <a href="#faq" class="hover:text-white">FAQ</a>
+    </nav>
+  </div>
 </header>
 
-<!-- TABS -->
-<nav class="tabs">
-  <button class="tab active" data-tab="enhance">Enhance</button>
-  <button class="tab" data-tab="compress">Compress</button>
-  <button class="tab" data-tab="remove">Watermark Remover</button>
-</nav>
+<!-- HERO -->
+<section class="pt-32 pb-24 text-center">
+  <h1 class="text-5xl md:text-6xl font-extrabold">
+    Remove Gemini Watermarks
+    <span class="block text-emerald-400 mt-2">in Seconds</span>
+  </h1>
 
-<!-- ================= ENHANCER ================= -->
-<section id="enhance" class="tool active">
-  <h2>Image Enhancer</h2>
-  <input type="file" id="enhanceUpload" accept="image/*">
-  <select id="enhancePreset">
-    <option value="portrait">Portrait</option>
-    <option value="lowlight">Low Light</option>
-    <option value="old">Old Photo</option>
-  </select>
-  <canvas id="enhanceCanvas"></canvas>
-  <button id="enhanceDownload">Download Enhanced</button>
-</section>
-
-<!-- ================= COMPRESSOR ================= -->
-<section id="compress" class="tool">
-  <h2>Image Compressor</h2>
-  <input type="file" id="compressUpload" accept="image/*">
-  <label>Quality: <span id="qval">80</span>%</label>
-  <input type="range" id="quality" min="30" max="95" value="80">
-  <select id="format">
-    <option value="image/jpeg">JPEG</option>
-    <option value="image/webp">WebP</option>
-  </select>
-  <canvas id="compressCanvas"></canvas>
-  <button id="compressDownload">Download Compressed</button>
-</section>
-
-<!-- ================= WATERMARK REMOVER ================= -->
-<section id="remove" class="tool">
-  <h2>AI Watermark / Logo Remover</h2>
-
-  <input type="file" id="removeUpload" accept="image/*">
-
-  <p class="limit">
-    Free usage today: <b><span id="remaining">5</span>/5</b>
+  <p class="mt-6 max-w-xl mx-auto text-white/70 text-lg">
+    Free tool to remove Google Gemini visible logo watermarks.
+    <br>
+    <span class="text-yellow-400 text-sm">
+      Visible watermark only – SynthID not removed.
+    </span>
   </p>
 
-  <canvas id="removeCanvas"></canvas>
+  <!-- UPLOAD BOX -->
+  <div class="mt-12 max-w-xl mx-auto">
+    <label class="block border-2 border-dashed border-white/20 rounded-2xl p-10 cursor-pointer hover:border-emerald-400 transition">
+      <input id="upload" type="file" class="hidden" accept="image/*">
+      <p class="text-lg font-semibold">Upload Gemini Image</p>
+      <p class="text-sm text-white/60 mt-2">JPG, PNG, WebP • Max 25MB</p>
+    </label>
+  </div>
 
-  <button id="removeProcess">Remove Watermark</button>
-  <button id="removeDownload">Download Image</button>
-
-  <p class="note">
-    Supports Gemini, Nano Banana & common AI watermarks.
-  </p>
+  <div class="mt-6 flex justify-center gap-6 text-sm text-white/60">
+    <span>✔ 100% Private</span>
+    <span>✔ Free 3 / day</span>
+    <span>✔ No Signup</span>
+  </div>
 </section>
 
-<!-- ================= PRICING ================= -->
-<section class="pricing">
-  <h2>Plans</h2>
+<!-- PROCESS AREA -->
+<section class="max-w-5xl mx-auto px-4">
+  <canvas id="canvas" class="rounded-xl shadow-2xl max-w-full mx-auto hidden"></canvas>
 
-  <div class="plans">
-    <div class="plan">
-      <h3>Free</h3>
-      <p>✔ 5 images per day</p>
-      <p>✔ Local browser processing</p>
-      <p>✖ No batch mode</p>
+  <div class="mt-6 flex justify-center gap-4">
+    <button id="process" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 rounded-lg font-semibold">
+      Remove Watermark
+    </button>
+    <button id="download" class="px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg">
+      Download
+    </button>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="py-24 max-w-6xl mx-auto px-4">
+  <h2 class="text-4xl font-bold text-center mb-16">How It Works</h2>
+
+  <div class="grid md:grid-cols-3 gap-12 text-center">
+    <div>
+      <h3 class="font-semibold text-xl mb-2">1. Upload</h3>
+      <p class="text-white/60">Upload a Gemini generated image.</p>
     </div>
-
-    <div class="plan pro">
-      <h3>Pro (Coming Soon)</h3>
-      <p>✔ Unlimited removals</p>
-      <p>✔ Batch processing</p>
-      <p>✔ Advanced AI cleanup</p>
-      <button disabled>Upgrade</button>
+    <div>
+      <h3 class="font-semibold text-xl mb-2">2. Process</h3>
+      <p class="text-white/60">We reverse Gemini’s visible watermark overlay.</p>
+    </div>
+    <div>
+      <h3 class="font-semibold text-xl mb-2">3. Download</h3>
+      <p class="text-white/60">Get a clean image instantly.</p>
     </div>
   </div>
 </section>
 
-<!-- ================= FAQ ================= -->
-<section class="faq">
-  <h2>Frequently Asked Questions</h2>
+<!-- FAQ -->
+<section id="faq" class="py-24 max-w-3xl mx-auto px-4">
+  <h2 class="text-4xl font-bold text-center mb-12">FAQ</h2>
 
-  <h4>Is this tool really free?</h4>
-  <p>Yes. You can remove up to 5 watermarks per day for free.</p>
+  <div class="space-y-4">
+    <details class="border border-white/10 rounded-lg p-4">
+      <summary class="font-semibold cursor-pointer">Is this really free?</summary>
+      <p class="mt-2 text-white/60">Yes. 3 images per day are free.</p>
+    </details>
 
-  <h4>Are my images uploaded?</h4>
-  <p>No. All image processing happens locally in your browser.</p>
+    <details class="border border-white/10 rounded-lg p-4">
+      <summary class="font-semibold cursor-pointer">Does this remove SynthID?</summary>
+      <p class="mt-2 text-white/60">No. Only the visible watermark.</p>
+    </details>
 
-  <h4>Does this work on Gemini / Nano Banana watermarks?</h4>
-  <p>Yes. These watermarks use predictable alpha overlays.</p>
-
-  <h4>Why do you offer paid plans?</h4>
-  <p>Paid plans unlock unlimited usage and future AI-powered features.</p>
+    <details class="border border-white/10 rounded-lg p-4">
+      <summary class="font-semibold cursor-pointer">Are images stored?</summary>
+      <p class="mt-2 text-white/60">No. Processing happens in your browser.</p>
+    </details>
+  </div>
 </section>
 
-<!-- ================= TRUST ================= -->
-<section class="trust">
-  <h2>Privacy & Trust</h2>
-  <ul>
-    <li>✔ No image uploads</li>
-    <li>✔ No image storage</li>
-    <li>✔ No tracking pixels</li>
-    <li>✔ Works offline after page load</li>
-  </ul>
-</section>
-
-<footer>
-  © 2026 AI Image Tools • All processing happens locally in your browser
+<!-- FOOTER -->
+<footer class="border-t border-white/10 py-12 text-center text-sm text-white/50">
+  © 2026 GeminiRemover • All rights reserved
 </footer>
 
-<script src="script.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
