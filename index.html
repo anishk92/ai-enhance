@@ -12,34 +12,31 @@
 <h1>Remove Gemini Watermark</h1>
 <p class="subtitle">Upload → Auto process → Download</p>
 
-<!-- UPLOAD -->
-<label class="upload-box" id="uploadBox">
-  <input type="file" id="upload" accept="image/*">
-  <h3>Upload Image</h3>
-  <span>JPG, PNG, WebP</span>
-</label>
+<!-- REAL INPUT (NOT INSIDE LABEL) -->
+<input type="file" id="fileInput" accept="image/*" hidden>
 
-<!-- LOADING -->
-<div id="loading" class="loading hidden">
-  Processing image…
+<!-- CLICKABLE UPLOAD BOX -->
+<div id="uploadBox" class="upload-box">
+  <strong>Click to upload image</strong>
+  <span>JPG · PNG · WebP</span>
 </div>
 
-<!-- PREVIEW -->
-<div class="preview hidden" id="preview">
+<div id="loading" class="hidden">Processing image…</div>
+
+<div id="preview" class="preview hidden">
   <div>
-    <h4>Before</h4>
+    <p>Before</p>
     <canvas id="before"></canvas>
   </div>
   <div>
-    <h4>After</h4>
+    <p>After</p>
     <canvas id="after"></canvas>
   </div>
 </div>
 
-<!-- ACTIONS -->
-<div class="controls hidden" id="controls">
-  <button id="download" class="btn-primary">Download</button>
-  <button id="reset" class="btn-secondary">Process Another Image</button>
+<div id="actions" class="hidden">
+  <button id="download">Download</button>
+  <button id="reset">Process another image</button>
 </div>
 
 <script src="main.js"></script>
