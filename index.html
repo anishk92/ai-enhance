@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AI Image Tools – Enhance, Compress & More</title>
-  <meta name="description" content="Free AI Image tools: Enhance photos, compress images, and remove objects.">
+  <title>AI Image Tools – Enhance, Compress & Watermark Remover</title>
+  <meta name="description" content="Free AI image tools. Enhance photos, compress images, and remove Gemini, Nano & AI watermarks locally in your browser.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -11,14 +11,14 @@
 
 <header>
   <h1>AI Image Tools</h1>
-  <p>Enhance • Compress • Remove Objects</p>
+  <p>Enhance • Compress • Remove AI Watermarks</p>
 </header>
 
 <!-- TABS -->
 <nav class="tabs">
   <button class="tab active" data-tab="enhance">Enhance</button>
   <button class="tab" data-tab="compress">Compress</button>
-  <button class="tab" data-tab="remove">Logo Remover</button>
+  <button class="tab" data-tab="remove">Watermark Remover</button>
 </nav>
 
 <!-- ================= ENHANCER ================= -->
@@ -48,17 +48,78 @@
   <button id="compressDownload">Download Compressed</button>
 </section>
 
-<!-- ================= LOGO REMOVER ================= -->
+<!-- ================= WATERMARK REMOVER ================= -->
 <section id="remove" class="tool">
-  <h2>Logo / Object Remover</h2>
-  <div class="coming">
-    🚧 AI-powered logo removal is coming soon.<br>
-    This feature requires advanced AI processing.
+  <h2>AI Watermark / Logo Remover</h2>
+
+  <input type="file" id="removeUpload" accept="image/*">
+
+  <p class="limit">
+    Free usage today: <b><span id="remaining">5</span>/5</b>
+  </p>
+
+  <canvas id="removeCanvas"></canvas>
+
+  <button id="removeProcess">Remove Watermark</button>
+  <button id="removeDownload">Download Image</button>
+
+  <p class="note">
+    Supports Gemini, Nano Banana & common AI watermarks.
+  </p>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="pricing">
+  <h2>Plans</h2>
+
+  <div class="plans">
+    <div class="plan">
+      <h3>Free</h3>
+      <p>✔ 5 images per day</p>
+      <p>✔ Local browser processing</p>
+      <p>✖ No batch mode</p>
+    </div>
+
+    <div class="plan pro">
+      <h3>Pro (Coming Soon)</h3>
+      <p>✔ Unlimited removals</p>
+      <p>✔ Batch processing</p>
+      <p>✔ Advanced AI cleanup</p>
+      <button disabled>Upgrade</button>
+    </div>
   </div>
 </section>
 
+<!-- ================= FAQ ================= -->
+<section class="faq">
+  <h2>Frequently Asked Questions</h2>
+
+  <h4>Is this tool really free?</h4>
+  <p>Yes. You can remove up to 5 watermarks per day for free.</p>
+
+  <h4>Are my images uploaded?</h4>
+  <p>No. All image processing happens locally in your browser.</p>
+
+  <h4>Does this work on Gemini / Nano Banana watermarks?</h4>
+  <p>Yes. These watermarks use predictable alpha overlays.</p>
+
+  <h4>Why do you offer paid plans?</h4>
+  <p>Paid plans unlock unlimited usage and future AI-powered features.</p>
+</section>
+
+<!-- ================= TRUST ================= -->
+<section class="trust">
+  <h2>Privacy & Trust</h2>
+  <ul>
+    <li>✔ No image uploads</li>
+    <li>✔ No image storage</li>
+    <li>✔ No tracking pixels</li>
+    <li>✔ Works offline after page load</li>
+  </ul>
+</section>
+
 <footer>
-  All image processing happens locally in your browser.
+  © 2026 AI Image Tools • All processing happens locally in your browser
 </footer>
 
 <script src="script.js"></script>
